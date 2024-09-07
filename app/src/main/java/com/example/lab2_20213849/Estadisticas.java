@@ -5,6 +5,7 @@ import android.graphics.Color;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
@@ -13,6 +14,7 @@ import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
 import androidx.activity.OnBackPressedCallback;
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
@@ -85,12 +87,26 @@ public class Estadisticas extends AppCompatActivity {
         botonNuevoJuego.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                nuevoJuego();
+                nuevoJuego(true);
             }
         });
     }
 
-    public void nuevoJuego(){
+
+    //Esto lo encontré en ChatGPT porque ya no podía más con ese Up Navigation, de verdad
+    //me había quedado hasta las 4am intentado hacer que funcione y no podía, así que tuve
+    //que recurrir a ChatGPT por salud mental.
+    //Lo que le pregunté fue si el Up Navigation tiene un ID por defecto y me dio este método
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId()==android.R.id.home){
+            nuevoJuego(false);
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
+    }
+
+    public void nuevoJuego(boolean esNuevoJuego){
         Intent intent = new Intent();
         String nombre = nombreJugador;
         ArrayList<String> lista = new ArrayList<>();
@@ -99,6 +115,7 @@ public class Estadisticas extends AppCompatActivity {
         intent.putExtra("nombreJugador",nombre);
         intent.putExtra("listaJuegos",lista);
         intent.putExtra("contadorJuegos",contador);
+        intent.putExtra("esNuevoJuego",esNuevoJuego);
         setResult(RESULT_OK,intent);
         finish();
     }

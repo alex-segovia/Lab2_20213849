@@ -90,6 +90,10 @@ public class TeleGame extends AppCompatActivity {
             nombreJugador = datos.getStringExtra("nombreJugador");
             listaJuegos = datos.getStringArrayListExtra("listaJuegos");
             contadorJuegos = datos.getIntExtra("contadorJuegos",0);
+            boolean esNuevoJuego = datos.getBooleanExtra("esNuevoJuego",true);
+            if(esNuevoJuego){
+                iniciarNuevoJuegoDesdeEstadisticas();
+            }
         }
     });
 
@@ -103,8 +107,16 @@ public class TeleGame extends AppCompatActivity {
 
     public void iniciarNuevoJuego(View view){
         if(estadoJuego.equals("Jugando")){
-            listaJuegos.add("Juego "+contadorJuegos+": Canceló");
             contadorJuegos++;
+            listaJuegos.add("Juego "+contadorJuegos+": Canceló");
+        }
+        crearJuego();
+    }
+
+    public void iniciarNuevoJuegoDesdeEstadisticas(){
+        if(estadoJuego.equals("Jugando")){
+            contadorJuegos++;
+            listaJuegos.add("Juego "+contadorJuegos+": Canceló");
         }
         crearJuego();
     }
