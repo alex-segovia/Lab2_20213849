@@ -16,6 +16,10 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import androidx.activity.EdgeToEdge;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.graphics.Insets;
@@ -32,11 +36,11 @@ public class TeleGame extends AppCompatActivity {
     private ArrayList<String> listaJuegos;
     private ArrayList<String> listaPalabras = new ArrayList<>();
     private String palabraElegida;
-    private ArrayList<String> listaLetrasMostradas = new ArrayList<>();
     private int contadorErrores;
     private int contadorLetras;
     private int contadorJuegos;
     private Long tiempoInicio;
+    private String estadoJuego;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,6 +60,12 @@ public class TeleGame extends AppCompatActivity {
         listaPalabras.add("CLOUD");
         listaPalabras.add("TELECO");
 
+        if(intent.getIntExtra("contadorJuegos",0)!=0){
+            contadorJuegos = intent.getIntExtra("contadorJuegos",0);
+        }else{
+            contadorJuegos = 0;
+        }
+
         crearJuego();
     }
 
@@ -73,21 +83,34 @@ public class TeleGame extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    ActivityResultLauncher<Intent> launcher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
+        @Override
+        public void onActivityResult(ActivityResult o) {
+            Intent datos = o.getData();
+            nombreJugador = datos.getStringExtra("nombreJugador");
+            listaJuegos = datos.getStringArrayListExtra("listaJuegos");
+            contadorJuegos = datos.getIntExtra("contadorJuegos",0);
+        }
+    });
+
     public void verEstadisticas(){
         Intent intent = new Intent(TeleGame.this, Estadisticas.class);
         intent.putExtra("nombreJugador",nombreJugador);
         intent.putExtra("listaJuegos",listaJuegos);
         intent.putExtra("contadorJuegos",contadorJuegos);
-        startActivity(intent);
+        launcher.launch(intent);
     }
 
     public void iniciarNuevoJuego(View view){
-        contadorJuegos++;
-        listaJuegos.add("Juego "+contadorJuegos+": Canceló");
+        if(estadoJuego.equals("Jugando")){
+            listaJuegos.add("Juego "+contadorJuegos+": Canceló");
+            contadorJuegos++;
+        }
         crearJuego();
     }
 
     public void crearJuego(){
+        estadoJuego = "Jugando";
         contadorErrores = 0;
         contadorLetras = 0;
         tiempoInicio = System.currentTimeMillis();
@@ -162,6 +185,7 @@ public class TeleGame extends AppCompatActivity {
                     resultado.setText(mensaje);
                     contadorJuegos++;
                     listaJuegos.add("Juego "+contadorJuegos+": Terminó en " + duracion + "s");
+                    estadoJuego = "Terminado";
                 }
             }
         }
@@ -198,6 +222,7 @@ public class TeleGame extends AppCompatActivity {
                 resultado.setText(mensaje);
                 contadorJuegos++;
                 listaJuegos.add("Juego "+contadorJuegos+": Terminó en " + duracion + "s");
+                estadoJuego = "Terminado";
             }
         }
     }
