@@ -14,11 +14,11 @@
         <activity
             android:name=".Estadisticas"
             android:label="Telegame"
-            android:exported="false"
+            android:exported="true"
             android:parentActivityName=".TeleGame" />
         <activity
             android:name=".TeleGame"
-            android:exported="false"
+            android:exported="true"
             android:label="TeleGame"
             android:parentActivityName=".MainActivity" />
         <activity

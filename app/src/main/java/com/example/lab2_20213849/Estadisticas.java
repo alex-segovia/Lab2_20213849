@@ -88,13 +88,6 @@ public class Estadisticas extends AppCompatActivity {
                 nuevoJuego();
             }
         });
-
-        getOnBackPressedDispatcher().addCallback(this, new OnBackPressedCallback(true) {
-            @Override
-            public void handleOnBackPressed() {
-                nuevoJuego();
-            }
-        });
     }
 
     public void nuevoJuego(){
